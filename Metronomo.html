@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Metrónomo A/B</title>
+</head>
+<body>
+  <h2>Metrónomo A/B</h2>
+  <button onclick="startMetronome()">Iniciar</button>
+  <button onclick="stopMetronome()">Detener</button>
+
+  <script>
+    let context = new (window.AudioContext || window.webkitAudioContext)();
+    let running = false;
+
+    function playBeep(frequency) {
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+
+      oscillator.frequency.value = frequency;
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.1);
+    }
+
+    function startMetronome() {
+      if (running) return;
+      running = true;
+
+      let isA = true;
+
+      function loop() {
+        if (!running) return;
+        if (isA) {
+          playBeep(800); // Sonido A
+          setTimeout(loop, 600); // Espera 0.6s
+        } else {
+          playBeep(400); // Sonido B
+          setTimeout(loop, 900); // Espera 0.9s
+        }
+        isA = !isA;
+      }
+
+      loop();
+    }
+
+    function stopMetronome() {
+      running = false;
+    }
+  </script>
+</body>
+</html>
